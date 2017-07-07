@@ -1,11 +1,18 @@
 <?php
+/* PhpMailForwarder
+ * Description: Automatic IMAP/POP3 Email Forwarder
+ * Author: EarlPeterG
+ * URI: https://github.com/earlpeterg/PhpMailForwarder
+ * Version: 0.1.0
+ */
 include 'settings.php';
 include 'vendor/autoload.php';
 
 $mailbox = new PhpImap\Mailbox("{" . $settings['in']['host'] . ":" . $settings['in']['port'] . $settings['in']['type'] . $settings['in']['security'] . "}INBOX", $settings['user'], $settings['password'], __DIR__);
 
 // Read all messaged into an array:
-$mailsIds = $mailbox->searchMailbox('ALL');
+$mailsIds = $mailbox->searchMailbox('UNSEEN');
+$deleteCopy = isset($settings['delete_copy']) ? $settings['delete_copy'] : false;
 
 foreach($mailsIds as $mailsId){
 	$mail = $mailbox->getMail($mailsId);
@@ -51,8 +58,10 @@ foreach($mailsIds as $mailsId){
 	} else {
 		echo "Message forwarded!\n";
 
-		// Delete message from imap server
-		$mailbox->deleteMail($mailsId);
+		if ($deleteCopy) {
+			// Delete message from imap server
+			$mailbox->deleteMail($mailsId);
+		}
 	}
 
 	// Delete temporary attachments

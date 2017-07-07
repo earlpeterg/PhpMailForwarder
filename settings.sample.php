@@ -16,5 +16,7 @@ $settings = [
 	
 	'to' => ['new_user@example', 'new_user_2@example.com'],
 	'cc' => [],
-	'bcc' => []
+	'bcc' => [],
+
+	'delete_copy' => false // when set to true message will be delete after forwarded
 ];

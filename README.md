@@ -1,2 +1,2 @@
 # PhpMailForwarder
-IMAP/POP3 Automatic Email Forwarder
+Automatic IMAP/POP3 Email Forwarder
