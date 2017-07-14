@@ -8,7 +8,7 @@ $settings = [
 	'in' => [
 		'host' => 'imap.yourdomain.com',
 		'port' => 995,
-		'type' => '/pop3', //can be: pop3 or imap
+		'type' => '/pop3', //can be: pop3 or imap, note: seen/unseen does not work on pop3
 		'security' => '/ssl' //can be: ssl, tls, notls
 	],
 	'user' => 'user@example.com',
