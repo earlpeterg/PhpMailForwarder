@@ -7,6 +7,7 @@
  */
 include 'settings.php';
 include 'vendor/autoload.php';
+use \ForceUTF8\Encoding;
 
 $mailbox = new PhpImap\Mailbox("{" . $settings['in']['host'] . ":" . $settings['in']['port'] . $settings['in']['type'] . $settings['in']['security'] . "}INBOX", $settings['user'], $settings['password'], __DIR__);
 
@@ -17,21 +18,25 @@ $deleteCopy = isset($settings['delete_copy']) ? $settings['delete_copy'] : false
 foreach($mailsIds as $mailsId){
 	$mail = $mailbox->getMail($mailsId);
 
-	$fromName = $mail->fromName;
+	$fromName = Encoding::toUTF8($mail->fromName);
 	$fromAddress = $mail->fromAddress;
-	$subject = $mail->subject;
+
+	$subject = Encoding::toUTF8($mail->subject);
+
 	$type = empty($mail->textHtml) ? "plain" : "mixed";
-	$body = empty($mail->textHtml) ? $mail->textPlain : $mail->textHtml;
+	$body = empty($mail->textHtml) ? Encoding::toUTF8($mail->textPlain) : Encoding::toUTF8($mail->textHtml);
 	$attachments = $mail->getAttachments();
 
 	echo "==================================\n";
-	echo "From: " . $fromName . "<" . $fromAddress . ">\n";
-	echo "Subject: " . $subject . "\n";
-	echo "Content Type: " . $type . "\n";
+	echo "From: $fromName <$fromAddress>\n";
+	echo "Subject: $subject\n";
+	echo "Content Type: $type\n";
 	echo "Body Length: " . strlen($body) . "\n";
 	echo "No. of Attachments: " . count($attachments) . "\n";
 
 	$mail = new PHPMailer;
+	$mail->CharSet = 'UTF-8';
+	$mail->Encoding = "base64";
 	$mail->setFrom($settings['user'], $fromName);
 	foreach($settings['to'] as $address){
 		$mail->addAddress($address);
