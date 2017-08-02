@@ -2,21 +2,17 @@
 include 'settings.php';
 include 'vendor/autoload.php';
 
-//Create a new PHPMailer instance
+// Below is a slightly modified excerpt from the PhpMailer test
 $mail = new PHPMailer;
-//Set who the message is to be sent from
-$mail->setFrom($settings['user'], 'First Last');
-//Set who the message is to be sent to
-$mail->addAddress('earl@earlpeter.com', 'Earl Peter G');
-//Set the subject line
+$mail->setFrom($instances[0]['user'], 'Php Mail Forwarder Test');
+$mail->addAddress($instances[0]['user'], 'Php Mail Forwarder Test');
 $mail->Subject = 'PHPMailer mail() test';
-//Read an HTML message body from an external file, convert referenced images to embedded,
-//convert HTML into a basic plain-text alternative body
-$mail->msgHTML(file_get_contents('vender/phpmailer/phpmailer/examples/contents.html'), dirname(__FILE__));
+$mail->msgHTML(file_get_contents('vendor/phpmailer/phpmailer/examples/contents.html'), 'vendor/phpmailer/phpmailer/examples');
 
 //send the message, check for errors
 if (!$mail->send()) {
     echo "Mailer Error: " . $mail->ErrorInfo;
-} else {
+}
+else {
     echo "Message sent!";
 }
