@@ -48,7 +48,8 @@ foreach($instances as $settings){
 		$mail->CharSet	= 'UTF-8';
 		$mail->Encoding	= "base64";
 
-		if ($settings['out']['phpmail']['use_original_email']){
+		if (isset($settings['out']['phpmail']['use_original_email'])
+			&& $settings['out']['phpmail']['use_original_email']){
 			$mail->setFrom($fromAddress, $fromName);
 		}
 		else {
@@ -104,3 +105,7 @@ function unlinkAttachments($attachments){
 	}
 }
 function getNewMailbox($imapPath, $login, $password, $attachmentsDir = __DIR__, $serverEncoding = 'UTF-8'){ return new PhpImap\Mailbox($imapPath, $login, $password, $attachmentsDir, $serverEncoding); }
+
+function getArrayPath($array, $path, $default = NULL){
+
+}
