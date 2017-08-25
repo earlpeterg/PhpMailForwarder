@@ -97,15 +97,14 @@ foreach($instances as $settings){
 }
 
 // ---- functions
-
-function toUTF8($str){ return Encoding::toUTF8($str); }
+function toUTF8($str){
+	return Encoding::toUTF8($str);
+}
 function unlinkAttachments($attachments){
 	foreach ($attachments as $attachment) {
 		unlink($attachment->filePath);
 	}
 }
-function getNewMailbox($imapPath, $login, $password, $attachmentsDir = __DIR__, $serverEncoding = 'UTF-8'){ return new PhpImap\Mailbox($imapPath, $login, $password, $attachmentsDir, $serverEncoding); }
-
-function getArrayPath($array, $path, $default = NULL){
-
+function getNewMailbox($imapPath, $login, $password, $attachmentsDir = __DIR__, $serverEncoding = 'UTF-8'){
+	return new PhpImap\Mailbox($imapPath, $login, $password, $attachmentsDir, $serverEncoding);
 }
