@@ -10,16 +10,14 @@ class Mail_Forwarder {
 		$serverEncoding = 'UTF-8';
 		$this->imap_connection = new Mailbox( $server, $user, $password, $attachmentsDir, $serverEncoding );
 
-		$this->recipient = (Object)[
-			'user' => $user,
-			'to' => $settings['to']
-		];
+		$this->sourceMail = $user;
+		$this->recipientMails = $settings['to'];
 
 		$this->delete_copy = isset( $settings['delete_copy'] ) ? $settings['delete_copy'] : false;
 	}
 
 	public function begin_forward_messages() {
-		$uids = $this->get_message_uids( 'UNSEEN' );
+		$uids = $this->get_message_uids();
 
 		foreach( $uids as $uid ) {
 			$message = $this->get_message( $uid );
@@ -27,7 +25,7 @@ class Mail_Forwarder {
 			if ( $this->forward_message( $message ) ) {
 				// Delete message from imap server
 				if ( $this->delete_copy ) {
-					$this->imap_connection->deleteMail( $mailsId );
+					$this->imap_connection->deleteMail( $uid );
 				}
 			}
 			$this->unlink_attachments( $message->attachments );
@@ -61,8 +59,8 @@ class Mail_Forwarder {
 		echo "Subject: {$message->subject}\n";
 		echo "No. of Attachments: ".count( $message->attachments )."\n";
 
-		foreach( $this->recipient->to as $address ){
-			if ( !$this->send_message( $message, $address ) ) {
+		foreach( $this->recipientMails as $recipientMail ){
+			if ( !$this->send_message( $message, $recipientMail ) ) {
 				return false;
 			}
 		}
@@ -76,11 +74,11 @@ class Mail_Forwarder {
 		$mail->Encoding	= 'base64';
 
 		$mail->setFrom( $message->from_mail, $message->from_name );
-		
+		$mail->addCustomHeader( 'X-Original-To', $this->sourceMail );
 		$mail->addAddress( $address );
 
-		foreach( $message->reply_to as $reply_to => $address ) {
-			$mail->addReplyTo( $reply_to, $address );
+		foreach( $message->reply_to as $reply_to_address => $reply_to_name ) {
+			$mail->addReplyTo( $reply_to_address, $reply_to_name );
 		}
 
 		
@@ -102,10 +100,10 @@ class Mail_Forwarder {
 
 		// Send the message, check for errors
 		if ( !$mail->send() ) {
-			echo "Mailer Error: " . $mail->ErrorInfo . "\n";
+			echo "Mailer Error: {$mail->ErrorInf}.\n";
 		}
 		else {
-			echo "Message forwarded!\n";
+			echo "Message forwarded to $address.\n";
 			return true;
 		}
 
