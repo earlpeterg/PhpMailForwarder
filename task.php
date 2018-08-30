@@ -3,7 +3,7 @@
  * Description: Automatic IMAP/POP3 Email Forwarder
  * Author: EarlPeterG
  * URI: https://github.com/earlpeterg/PhpMailForwarder
- * Version: 0.2.0
+ * Version: 0.3.0
  */
 
 // TODO: Support SMTP
